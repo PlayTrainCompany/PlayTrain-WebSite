@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlayTrain - Железнодорожные симуляторы</title>
+    <style>
+        :root {
+            --primary-color: #0a1a35;
+            --secondary-color: #1a2f5a;
+            --accent-color: #2a4b8c;
+            --text-color: #ffffff;
+            --highlight-color: #4a7bd9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Шапка */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--secondary-color);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        header.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-small {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .header-motto {
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* Первый экран */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--primary-color);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .hero-logo {
+            width: 80%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease 0.2s, transform 1s ease 0.2s;
+        }
+
+        .hero.visible .hero-logo,
+        .hero.visible .hero-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Секции с играми */
+        .game-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 5%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .game-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .game-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .game-text {
+            padding-right: 20px;
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .game-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            margin-right: 20px;
+            object-fit: cover;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: var(--highlight-color);
+        }
+
+        .game-description {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .game-features {
+            list-style-type: none;
+            margin-bottom: 30px;
+        }
+
+        .game-features li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .game-features li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--highlight-color);
+            font-weight: bold;
+        }
+
+        .game-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--highlight-color);
+            transform: translateY(-3px);
+        }
+
+        .btn-rustore {
+            background-color: #ff3c00;
+        }
+
+        .btn-rustore:hover {
+            background-color: #ff5c2a;
+        }
+
+        .btn-telegram {
+            background-color: #0088cc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-telegram:hover {
+            background-color: #0099e6;
+        }
+
+        .tg-icon {
+            width: 24px;
+            height: 20px;
+        }
+
+        .game-screenshots {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .screenshot {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .screenshot.active {
+            opacity: 1;
+        }
+
+        .screenshot-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .nav-dot.active {
+            background-color: var(--highlight-color);
+        }
+
+        .screenshot-arrows {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 20px;
+            z-index: 10;
+        }
+
+        .arrow {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 20px;
+            color: white;
+        }
+
+        .arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Для вертикальных скриншотов (базар) */
+        .vertical-screenshots .screenshot {
+            object-fit: contain;
+            background-color: var(--secondary-color);
+        }
+
+        /* Для горизонтальных скриншотов (МЦД) */
+        .horizontal-screenshots .screenshot {
+            object-fit: cover;
+        }
+
+        /* Чередование расположения текста и изображений */
+        .game-section:nth-child(even) .game-container {
+            direction: rtl;
+        }
+
+        .game-section:nth-child(even) .game-text {
+            direction: ltr;
+            padding-right: 0;
+            padding-left: 20px;
+        }
+
+        /* Подвал */
+        footer {
+            background-color: var(--secondary-color);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-logo {
+            height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        .telegram-promo {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: rgba(0, 136, 204, 0.2);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* Блок разработчика */
+        .developer-info {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .developer-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--highlight-color);
+        }
+
+        .developer-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .game-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .game-section:nth-child(even) .game-container {
+                direction: ltr;
+            }
+            
+            .game-section:nth-child(even) .game-text {
+                padding-left: 0;
+            }
+            
+            .game-screenshots {
+                height: 400px;
+            }
+            
+            .vertical-screenshots {
+                height: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-logo {
+                width: 90%;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .header-motto {
+                display: none;
+            }
+            
+            .game-section {
+                padding: 80px 5%;
+            }
+            
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .game-screenshots {
+                height: 300px;
+            }
+            
+            .vertical-screenshots {
+                height: 450px;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .game-icon {
+                margin-bottom: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .game-title {
+                font-size: 1.8rem;
+            }
+            
+            .game-screenshots {
+                height: 250px;
+            }
+            
+            .vertical-screenshots {
+                height: 350px;
+            }
+            
+            .game-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                text-align: center;
+            }
+            
+            .screenshot-arrows {
+                padding: 0 10px;
+            }
+            
+            .arrow {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header id="main-header">
+        <div class="header-logo">
+            <img src="Logo.jpeg" alt="PlayTrain" class="logo-small">
+            <span class="company-name">PlayTrain</span>
+        </div>
+        <div class="header-motto">Путешествуй по рельсам!</div>
+    </header>
+
+    <!-- Первый экран -->
+    <section class="hero" id="hero">
+        <img src="Logo.jpeg" alt="PlayTrain" class="hero-logo">
+        <h1 class="hero-title">PlayTrain Company</h1>
+    </section>
+
+    <!-- Секция с игрой 1 -->
+    <section class="game-section" id="game1">
+        <div class="game-container">
+            <div class="game-text">
+                <div class="game-header">
+                    <img src="Long Distance Train/icon.jpeg" alt="Long Distance Train" class="game-icon">
+                    <h2 class="game-title">Long Distance Train</h2>
+                </div>
+                <p class="game-description">
+                    Long Distance Train — симулятор поезда дальнего следования по российским железнодорожным маршрутам. 
+                    Погрузитесь в атмосферу настоящего железнодорожного путешествия, управляйте современными поездами 
+                    и преодолевайте расстояния, охватывающие всю страну. В игре вас ждут реалистичные маршруты, 
+                    аутентичные вагоны и возможность прокладывать свой маршрут, наслаждаясь красотами российских пейзажей.
+                </p>
+                <ul class="game-features">
+                    <li>Реалистичные маршруты по всей России</li>
+                    <li>Аутентичные вагоны и поезда</li>
+                    <li>Возможность прокладывать собственные маршруты</li>
+                    <li>Потрясающие пейзажи и атмосфера путешествия</li>
+                </ul>
+                <div class="game-buttons">
+                    <a href="https://www.rustore.ru/catalog/app/com.PlayTrain.LongDistanceTrain" class="btn btn-rustore">Скачать в RuStore</a>
+                </div>
+            </div>
+            <div class="game-screenshots">
+                <img src="Long Distance Train/screen1.jpeg" alt="Скриншот 1" class="screenshot active">
+                <img src="Long Distance Train/screen2.jpeg" alt="Скриншот 2" class="screenshot">
+                <img src="Long Distance Train/screen3.jpeg" alt="Скриншот 3" class="screenshot">
+                <img src="Long Distance Train/screen4.jpeg" alt="Скриншот 4" class="screenshot">
+                <img src="Long Distance Train/screen5.jpeg" alt="Скриншот 5" class="screenshot">
+                <img src="Long Distance Train/screen6.jpeg" alt="Скриншот 6" class="screenshot">
+                <img src="Long Distance Train/screen7.jpeg" alt="Скриншот 7" class="screenshot">
+                <img src="Long Distance Train/screen8.jpeg" alt="Скриншот 8" class="screenshot">
+                <div class="screenshot-arrows">
+                    <div class="arrow prev">‹</div>
+                    <div class="arrow next">›</div>
+                </div>
+                <div class="screenshot-nav">
+                    <div class="nav-dot active" data-index="0"></div>
+                    <div class="nav-dot" data-index="1"></div>
+                    <div class="nav-dot" data-index="2"></div>
+                    <div class="nav-dot" data-index="3"></div>
+                    <div class="nav-dot" data-index="4"></div>
+                    <div class="nav-dot" data-index="5"></div>
+                    <div class="nav-dot" data-index="6"></div>
+                    <div class="nav-dot" data-index="7"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция с игрой 2 -->
+    <section class="game-section" id="game2">
+        <div class="game-container">
+            <div class="game-text">
+                <div class="game-header">
+                    <img src="BMO/icon.jpeg" alt="Train Simulator BMO" class="game-icon">
+                    <h2 class="game-title">Train Simulator BMO</h2>
+                </div>
+                <p class="game-description">
+                    Погрузитесь в атмосферу реалистичных грузовых перевозок на легендарных советских и российских тепловозах! 
+                    Вам предстоит управлять мощными локомотивами серий 2ТЭ116, 2ТЭ10М 2ТЭ25Км, 2ТЭ10МК и 2ТЭ116У, 
+                    перевозя разнообразные грузы по Большому Московскому Областному кольцу (БМО).
+                </p>
+                <ul class="game-features">
+                    <li>Разнообразные грузы: обычные товары, специальные перевозки, разные типы вагонов</li>
+                    <li>Реалистичные тепловозы: 2ТЭ116, 2ТЭ10М, 2ТЭ10МК, 2ТЭ116У</li>
+                    <li>Динамичный мир с другими поездами и меняющейся погодой</li>
+                    <li>Продуманные маршруты с 3-4 промежуточными остановками</li>
+                    <li>Реалистичное управление с физикой движения и работой с тормозами</li>
+                </ul>
+                <div class="game-buttons">
+                    <a href="https://www.rustore.ru/catalog/app/com.playtrain.freighttrain2025bmo" class="btn btn-rustore">Скачать в RuStore</a>
+                </div>
+            </div>
+            <div class="game-screenshots">
+                <img src="BMO/screen1.jpeg" alt="Скриншот 1" class="screenshot active">
+                <img src="BMO/screen2.jpeg" alt="Скриншот 2" class="screenshot">
+                <img src="BMO/screen3.jpeg" alt="Скриншот 3" class="screenshot">
+                <img src="BMO/screen4.jpeg" alt="Скриншот 4" class="screenshot">
+                <img src="BMO/screen5.jpeg" alt="Скриншот 5" class="screenshot">
+                <img src="BMO/screen6.jpeg" alt="Скриншот 6" class="screenshot">
+                <img src="BMO/screen7.jpeg" alt="Скриншот 7" class="screenshot">
+                <div class="screenshot-arrows">
+                    <div class="arrow prev">‹</div>
+                    <div class="arrow next">›</div>
+                </div>
+                <div class="screenshot-nav">
+                    <div class="nav-dot active" data-index="0"></div>
+                    <div class="nav-dot" data-index="1"></div>
+                    <div class="nav-dot" data-index="2"></div>
+                    <div class="nav-dot" data-index="3"></div>
+                    <div class="nav-dot" data-index="4"></div>
+                    <div class="nav-dot" data-index="5"></div>
+                    <div class="nav-dot" data-index="6"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция с игрой 3 -->
+    <section class="game-section" id="game3">
+        <div class="game-container">
+            <div class="game-text">
+                <div class="game-header">
+                    <img src="TRAIN 3/icon.jpeg" alt="TRAIN 3" class="game-icon">
+                    <h2 class="game-title">TRAIN 3</h2>
+                </div>
+                <p class="game-description">
+                    Уникальная игра с тремя видами железнодорожного движения в одной игре: маневровое, грузовое и пассажирское. 
+                    Более 100 локомотивов и поездов, которые можно встретить в игре, и более 80 видов локомотивов в вашем распоряжении!
+                </p>
+                <ul class="game-features">
+                    <li>3 вида железнодорожного движения в одной игре</li>
+                    <li>Более 100 локомотивов и поездов</li>
+                    <li>Коммуникация с пассажирами поезда</li>
+                    <li>Система смены панелей управления для каждого локомотива</li>
+                    <li>Система смены дня и ночи в зависимости от времени на устройстве</li>
+                    <li>Система смены подачи звуковых сигналов для каждого локомотива</li>
+                    <li>Мини-карта текущего маршрута и система просмотра всего состава</li>
+                </ul>
+                <div class="game-buttons">
+                    <a href="https://www.rustore.ru/catalog/app/com.DefaultCompany.Train3" class="btn btn-rustore">Скачать в RuStore</a>
+                </div>
+            </div>
+            <div class="game-screenshots">
+                <img src="TRAIN 3/screen1.jpeg" alt="Скриншот 1" class="screenshot active">
+                <img src="TRAIN 3/screen2.jpeg" alt="Скриншот 2" class="screenshot">
+                <img src="TRAIN 3/screen3.jpeg" alt="Скриншот 3" class="screenshot">
+                <img src="TRAIN 3/screen4.jpeg" alt="Скриншот 4" class="screenshot">
+                <img src="TRAIN 3/screen5.jpeg" alt="Скриншот 5" class="screenshot">
+                <img src="TRAIN 3/screen6.jpeg" alt="Скриншот 6" class="screenshot">
+                <img src="TRAIN 3/screen7.jpeg" alt="Скриншот 7" class="screenshot">
+                <img src="TRAIN 3/screen8.jpeg" alt="Скриншот 8" class="screenshot">
+                <div class="screenshot-arrows">
+                    <div class="arrow prev">‹</div>
+                    <div class="arrow next">›</div>
+                </div>
+                <div class="screenshot-nav">
+                    <div class="nav-dot active" data-index="0"></div>
+                    <div class="nav-dot" data-index="1"></div>
+                    <div class="nav-dot" data-index="2"></div>
+                    <div class="nav-dot" data-index="3"></div>
+                    <div class="nav-dot" data-index="4"></div>
+                    <div class="nav-dot" data-index="5"></div>
+                    <div class="nav-dot" data-index="6"></div>
+                    <div class="nav-dot" data-index="7"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция с игрой 4 -->
+    <section class="game-section" id="game4">
+        <div class="game-container">
+            <div class="game-text">
+                <div class="game-header">
+                    <img src="BAZAR/icon.jpeg" alt="Московский Базар 2D" class="game-icon">
+                    <h2 class="game-title">Кликер - Московский Базар 2D</h2>
+                </div>
+                <p class="game-description">
+                    Накопи как можно больше монет, торгуй арбузами, слушай фразы "зазывалки" торговца, 
+                    соревнуйся в рейтинге с игроками. У Ашота лучшие дыни и арбузы!
+                </p>
+                <ul class="game-features">
+                    <li>Захватывающий кликер с механикой торговли</li>
+                    <li>Соревнование с другими игроками в рейтинге</li>
+                    <li>Атмосфера настоящего московского базара</li>
+                    <li>Запоминающиеся персонажи и зазывалки</li>
+                    <li>Простой и addictive геймплей</li>
+                </ul>
+                <div class="game-buttons">
+                    <a href="https://www.rustore.ru/catalog/app/com.PlayTrain.RussianBazar" class="btn btn-rustore">Скачать в RuStore</a>
+                </div>
+            </div>
+            <div class="game-screenshots vertical-screenshots">
+                <img src="BAZAR/screen1.jpeg" alt="Скриншот 1" class="screenshot active">
+                <img src="BAZAR/screen2.jpeg" alt="Скриншот 2" class="screenshot">
+                <div class="screenshot-arrows">
+                    <div class="arrow prev">‹</div>
+                    <div class="arrow next">›</div>
+                </div>
+                <div class="screenshot-nav">
+                    <div class="nav-dot active" data-index="0"></div>
+                    <div class="nav-dot" data-index="1"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция с новой игрой МЦД -->
+    <section class="game-section" id="game5">
+        <div class="game-container">
+            <div class="game-text">
+                <div class="game-header">
+                    <img src="MCD/icon.jpeg" alt="МЦД Электрички" class="game-icon">
+                    <h2 class="game-title">МЦД Электрички. Московские Центральные Диаметры 2D</h2>
+                </div>
+                <p class="game-description">
+                    Ты - опытный машинист московской электрички! Выбери свой любимый электропоезд, и в путь! 
+                    Исследуй Москву, соблюдай скоростной режим, и делай все обязанности настоящего машиниста!
+                </p>
+                <ul class="game-features">
+                    <li>Электропоезда: ЭГ2Тв "Иволга", ЭД4М, ЭП2Д</li>
+                    <li>Реалистичные переезды и люди на станциях</li>
+                    <li>Города и леса, время суток по реальному времени</li>
+                    <li>Постоянное пополнение списка электропоездов</li>
+                    <li>Увлекательный геймплей без возможности заскучать</li>
+                </ul>
+                <div class="game-buttons">
+                    <a href="https://www.rustore.ru/catalog/app/com.PlayTrain.MCDTrain" class="btn btn-rustore">Скачать в RuStore</a>
+                </div>
+            </div>
+            <div class="game-screenshots horizontal-screenshots">
+                <img src="MCD/screen1.jpeg" alt="Скриншот 1" class="screenshot active">
+                <img src="MCD/screen2.jpeg" alt="Скриншот 2" class="screenshot">
+                <img src="MCD/screen3.jpeg" alt="Скриншот 3" class="screenshot">
+                <img src="MCD/screen4.jpeg" alt="Скриншот 4" class="screenshot">
+                <div class="screenshot-arrows">
+                    <div class="arrow prev">‹</div>
+                    <div class="arrow next">›</div>
+                </div>
+                <div class="screenshot-nav">
+                    <div class="nav-dot active" data-index="0"></div>
+                    <div class="nav-dot" data-index="1"></div>
+                    <div class="nav-dot" data-index="2"></div>
+                    <div class="nav-dot" data-index="3"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <div class="footer-content">
+            <img src="Logo.jpeg" alt="PlayTrain" class="footer-logo">
+            <p>PlayTrain Company - разработчик качественных железнодорожных симуляторов</p>
+            
+            <div class="telegram-promo">
+                <h3>Следите за нашими новостями!</h3>
+                <p>Узнавайте первыми о новых играх, обновлениях и специальных предложениях</p>
+                <a href="https://t.me/traingame127" class="btn btn-telegram">
+                    <img src="TG.png" alt="Telegram" class="tg-icon">
+                    Подписаться на Telegram-канал
+                </a>
+            </div>
+            
+            <div class="developer-info">
+                <img src="aleson2021.jpg" alt="ALESON" class="developer-avatar">
+                <div class="developer-text">Website by ALESON 2021</div>
+            </div>
+            
+            <p class="copyright">© 2025 PlayTrain. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Упрощенная анимация появления элементов
+        document.addEventListener('DOMContentLoaded', function() {
+            const hero = document.getElementById('hero');
+            const header = document.getElementById('main-header');
+            const gameSections = document.querySelectorAll('.game-section');
+            
+            // Сразу показываем герой-секцию
+            setTimeout(() => {
+                hero.classList.add('visible');
+            }, 300);
+            
+            // Обработчик скролла
+            window.addEventListener('scroll', function() {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
+                
+                // Показываем/скрываем герой-секцию
+                if (scrollY > windowHeight * 0.3) {
+                    hero.style.opacity = Math.max(0, 1 - (scrollY - windowHeight * 0.3) / (windowHeight * 0.3));
+                } else {
+                    hero.style.opacity = 1;
+                }
+                
+                // Показываем шапку после скролла
+                if (scrollY > windowHeight * 0.5) {
+                    header.classList.add('visible');
+                } else {
+                    header.classList.remove('visible');
+                }
+                
+                // Показываем секции игр при скролле
+                gameSections.forEach(section => {
+                    const sectionTop = section.getBoundingClientRect().top;
+                    if (sectionTop < windowHeight * 0.8) {
+                        section.classList.add('active');
+                    }
+                });
+            });
+            
+            // Инициализация карусели скриншотов
+            document.querySelectorAll('.game-screenshots').forEach(container => {
+                const dots = container.querySelectorAll('.nav-dot');
+                const screenshots = container.querySelectorAll('.screenshot');
+                const prevBtn = container.querySelector('.arrow.prev');
+                const nextBtn = container.querySelector('.arrow.next');
+                
+                let currentIndex = 0;
+                
+                function showSlide(index) {
+                    dots.forEach(d => d.classList.remove('active'));
+                    screenshots.forEach(s => s.classList.remove('active'));
+                    
+                    dots[index].classList.add('active');
+                    screenshots[index].classList.add('active');
+                    
+                    currentIndex = index;
+                }
+                
+                dots.forEach(dot => {
+                    dot.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        showSlide(index);
+                    });
+                });
+                
+                prevBtn.addEventListener('click', function() {
+                    let newIndex = currentIndex - 1;
+                    if (newIndex < 0) newIndex = dots.length - 1;
+                    showSlide(newIndex);
+                });
+                
+                nextBtn.addEventListener('click', function() {
+                    let newIndex = currentIndex + 1;
+                    if (newIndex >= dots.length) newIndex = 0;
+                    showSlide(newIndex);
+                });
+                
+                // Автоматическое перелистывание
+                setInterval(() => {
+                    let newIndex = currentIndex + 1;
+                    if (newIndex >= dots.length) newIndex = 0;
+                    showSlide(newIndex);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
