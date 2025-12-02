@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlayTrain - Железнодорожные симуляторы</title>
-    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
     <style>
         :root {
             --primary-color: #0a1a35;
@@ -303,12 +303,6 @@
             background-color: rgba(0, 0, 0, 0.8);
         }
 
-        /* Для вертикальных скриншотов (базар) */
-        .vertical-screenshots .screenshot {
-            object-fit: contain;
-            background-color: var(--secondary-color);
-        }
-
         /* Для горизонтальных скриншотов (МЦД) */
         .horizontal-screenshots .screenshot {
             object-fit: cover;
@@ -398,10 +392,6 @@
             .game-screenshots {
                 height: 400px;
             }
-            
-            .vertical-screenshots {
-                height: 600px;
-            }
         }
 
         @media (max-width: 768px) {
@@ -429,10 +419,6 @@
                 height: 300px;
             }
             
-            .vertical-screenshots {
-                height: 450px;
-            }
-            
             .game-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -454,10 +440,6 @@
             
             .game-screenshots {
                 height: 250px;
-            }
-            
-            .vertical-screenshots {
-                height: 350px;
             }
             
             .game-buttons {
@@ -648,46 +630,8 @@
         </div>
     </section>
 
-    <!-- Секция с игрой 4 -->
+    <!-- Секция с игрой МЦД (теперь она 4-я) -->
     <section class="game-section" id="game4">
-        <div class="game-container">
-            <div class="game-text">
-                <div class="game-header">
-                    <img src="BAZAR/icon.jpeg" alt="Московский Базар 2D" class="game-icon">
-                    <h2 class="game-title">Кликер - Московский Базар 2D</h2>
-                </div>
-                <p class="game-description">
-                    Накопи как можно больше монет, торгуй арбузами, слушай фразы "зазывалки" торговца, 
-                    соревнуйся в рейтинге с игроками. У Ашота лучшие дыни и арбузы!
-                </p>
-                <ul class="game-features">
-                    <li>Захватывающий кликер с механикой торговли</li>
-                    <li>Соревнование с другими игроками в рейтинге</li>
-                    <li>Атмосфера настоящего московского базара</li>
-                    <li>Запоминающиеся персонажи и зазывалки</li>
-                    <li>Простой и addictive геймплей</li>
-                </ul>
-                <div class="game-buttons">
-                    <a href="https://www.rustore.ru/catalog/app/com.PlayTrain.RussianBazar" class="btn btn-rustore">Скачать в RuStore</a>
-                </div>
-            </div>
-            <div class="game-screenshots vertical-screenshots">
-                <img src="BAZAR/screen1.jpeg" alt="Скриншот 1" class="screenshot active">
-                <img src="BAZAR/screen2.jpeg" alt="Скриншот 2" class="screenshot">
-                <div class="screenshot-arrows">
-                    <div class="arrow prev">‹</div>
-                    <div class="arrow next">›</div>
-                </div>
-                <div class="screenshot-nav">
-                    <div class="nav-dot active" data-index="0"></div>
-                    <div class="nav-dot" data-index="1"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Секция с новой игрой МЦД -->
-    <section class="game-section" id="game5">
         <div class="game-container">
             <div class="game-text">
                 <div class="game-header">
@@ -841,6 +785,3 @@
     </script>
 </body>
 </html>
-
-
-
