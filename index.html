@@ -108,6 +108,85 @@
             transform: translateY(0);
         }
 
+        /* Секция "О компании" */
+        .about-section {
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 5%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .about-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .about-content {
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .about-title {
+            font-size: 2.8rem;
+            color: var(--highlight-color);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .about-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--highlight-color);
+        }
+
+        .about-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        /* Секция "Наши продукты" */
+        .products-title-section {
+            padding: 40px 5%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .products-title-section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .products-title {
+            font-size: 2.8rem;
+            color: var(--highlight-color);
+            position: relative;
+        }
+
+        .products-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background-color: var(--highlight-color);
+        }
+
         /* Секции с играми */
         .game-section {
             min-height: 100vh;
@@ -403,12 +482,16 @@
                 font-size: 2.5rem;
             }
             
+            .about-title, .products-title {
+                font-size: 2.3rem;
+            }
+            
             .header-motto {
                 display: none;
             }
             
-            .game-section {
-                padding: 80px 5%;
+            .about-section, .game-section {
+                padding: 60px 5%;
             }
             
             .game-title {
@@ -432,6 +515,14 @@
         @media (max-width: 480px) {
             .hero-title {
                 font-size: 2rem;
+            }
+            
+            .about-title, .products-title {
+                font-size: 1.8rem;
+            }
+            
+            .about-description {
+                font-size: 1.1rem;
             }
             
             .game-title {
@@ -476,6 +567,23 @@
     <section class="hero" id="hero">
         <img src="Logo.jpeg" alt="PlayTrain" class="hero-logo">
         <h1 class="hero-title">PlayTrain Company</h1>
+    </section>
+
+    <!-- Секция "О компании" -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <h2 class="about-title">О компании</h2>
+            <p class="about-description">
+                PlayTrain — студия разработки качественных 2D-симуляторов поездов для Android. 
+                Наши игры, доступные в RuStore, предлагают реалистичный опыт управления железнодорожным транспортом 
+                и погружают в атмосферу рельсовых путешествий по просторам России.
+            </p>
+        </div>
+    </section>
+
+    <!-- Секция "Наши продукты" -->
+    <section class="products-title-section" id="products-title">
+        <h2 class="products-title">Наши продукты</h2>
     </section>
 
     <!-- Секция с игрой 1 -->
@@ -630,7 +738,7 @@
         </div>
     </section>
 
-    <!-- Секция с игрой МЦД (теперь она 4-я) -->
+    <!-- Секция с игрой 4 -->
     <section class="game-section" id="game4">
         <div class="game-container">
             <div class="game-text">
@@ -701,6 +809,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             const hero = document.getElementById('hero');
             const header = document.getElementById('main-header');
+            const aboutSection = document.getElementById('about');
+            const productsTitle = document.getElementById('products-title');
             const gameSections = document.querySelectorAll('.game-section');
             
             // Сразу показываем герой-секцию
@@ -725,6 +835,18 @@
                     header.classList.add('visible');
                 } else {
                     header.classList.remove('visible');
+                }
+                
+                // Показываем секцию "О компании"
+                const aboutTop = aboutSection.getBoundingClientRect().top;
+                if (aboutTop < windowHeight * 0.8) {
+                    aboutSection.classList.add('active');
+                }
+                
+                // Показываем заголовок "Наши продукты"
+                const productsTop = productsTitle.getBoundingClientRect().top;
+                if (productsTop < windowHeight * 0.8) {
+                    productsTitle.classList.add('active');
                 }
                 
                 // Показываем секции игр при скролле
