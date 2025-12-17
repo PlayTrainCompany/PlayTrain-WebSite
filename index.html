@@ -22,6 +22,9 @@
             --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
             --ai-color: #9C27B0;
             --ai-gradient: linear-gradient(135deg, #9C27B0, #673AB7);
+            --new-year-red: #FF4757;
+            --new-year-green: #2ED573;
+            --new-year-gold: #FFA502;
         }
 
         * {
@@ -36,10 +39,37 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #1a1a2e 100%);
+            background: linear-gradient(135deg, #0c0e29 0%, #1a237e 50%, #283593 100%);
             color: var(--neutral-white);
             line-height: 1.7;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Снежинки на фоне */
+        .snow-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
         }
 
         /* Custom Scrollbar */
@@ -52,7 +82,7 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-blue);
+            background: linear-gradient(45deg, var(--accent-blue), var(--new-year-red));
             border-radius: 5px;
         }
 
@@ -62,6 +92,8 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 2;
         }
 
         .section-title {
@@ -70,6 +102,7 @@
             margin-bottom: 3rem;
             position: relative;
             display: inline-block;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .section-title:after {
@@ -80,8 +113,9 @@
             transform: translateX(-50%);
             width: 100px;
             height: 4px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal));
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal), var(--new-year-red));
             border-radius: 2px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
 
         .btn {
@@ -100,6 +134,24 @@
             cursor: pointer;
             transition: var(--transition);
             box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
@@ -133,6 +185,21 @@
         .btn-ai:hover {
             box-shadow: 0 10px 25px rgba(156, 39, 176, 0.5);
             transform: translateY(-5px);
+        }
+
+        .btn-new-year {
+            background: linear-gradient(90deg, var(--new-year-red), var(--new-year-gold));
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+            animation: festiveGlow 2s infinite alternate;
+        }
+
+        @keyframes festiveGlow {
+            0% { box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3); }
+            100% { box-shadow: 0 5px 25px rgba(255, 71, 87, 0.7), 0 0 30px rgba(255, 165, 2, 0.4); }
+        }
+
+        .btn-new-year:hover {
+            transform: translateY(-5px) scale(1.05);
         }
 
         /* Header - Modern Sticky */
@@ -170,11 +237,14 @@
         .logo-small {
             height: 50px;
             border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
 
         .brand-text h1 {
             font-size: 1.8rem;
             color: var(--neutral-white);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
         .brand-text p {
@@ -195,6 +265,7 @@
             font-size: 1.1rem;
             position: relative;
             padding: 5px 0;
+            transition: var(--transition);
         }
 
         .nav-links a:after {
@@ -204,12 +275,16 @@
             left: 0;
             width: 0;
             height: 2px;
-            background: var(--accent-teal);
+            background: linear-gradient(90deg, var(--accent-teal), var(--new-year-red));
             transition: width 0.3s ease;
         }
 
         .nav-links a:hover:after {
             width: 100%;
+        }
+
+        .nav-links a:hover {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         .mobile-menu-btn {
@@ -220,6 +295,12 @@
             color: white;
             cursor: pointer;
             z-index: 1001;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            transform: rotate(90deg);
+            color: var(--new-year-red);
         }
 
         /* Floating AI Button */
@@ -240,11 +321,32 @@
             transition: var(--transition);
             border: 3px solid rgba(255, 255, 255, 0.2);
             animation: float 6s ease-in-out infinite;
+            overflow: hidden;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
+        }
+
+        .floating-ai-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                transparent 30%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 70%
+            );
+            animation: buttonShine 3s infinite linear;
+        }
+
+        @keyframes buttonShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .floating-ai-btn:hover {
@@ -258,6 +360,8 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid white;
+            position: relative;
+            z-index: 2;
         }
 
         .ai-tooltip {
@@ -276,6 +380,7 @@
             font-size: 0.9rem;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 2;
         }
 
         .ai-tooltip:after {
@@ -317,7 +422,7 @@
             background: 
                 radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(6, 214, 160, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(255, 158, 0, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 40% 80%, rgba(255, 71, 87, 0.1) 0%, transparent 50%);
             z-index: -1;
         }
 
@@ -337,18 +442,32 @@
         .hero-title {
             font-size: 4rem;
             margin-bottom: 20px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal), var(--accent-orange));
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-teal), var(--new-year-red), var(--new-year-gold));
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: fadeInUp 1s ease-out;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite, textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+            100% { text-shadow: 0 0 30px rgba(255, 71, 87, 0.5); }
         }
 
         .hero-subtitle {
             font-size: 1.5rem;
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
             max-width: 800px;
             margin-bottom: 40px;
             animation: fadeInUp 1s ease-out 0.2s both;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .hero-btns {
@@ -367,23 +486,53 @@
             max-width: 900px;
             margin: 0 auto;
             text-align: center;
-            background: var(--card-bg);
+            background: rgba(16, 20, 50, 0.7);
             backdrop-filter: blur(10px);
             padding: 60px;
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: var(--card-shadow);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                transparent 0%,
+                rgba(59, 130, 246, 0.05) 50%,
+                transparent 100%
+            );
+            pointer-events: none;
+            animation: scanline 15s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
         }
 
         .about-text {
             font-size: 1.3rem;
             line-height: 1.8;
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 2;
         }
 
         /* Games Section */
         .games-section {
             padding: 100px 0;
+            position: relative;
         }
 
         .games-filter {
@@ -396,18 +545,37 @@
 
         .filter-btn {
             padding: 12px 24px;
-            background: var(--card-bg);
+            background: rgba(255, 255, 255, 0.07);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--neutral-white);
             border-radius: 50px;
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .filter-btn:hover::before {
+            left: 100%;
         }
 
         .filter-btn.active, .filter-btn:hover {
-            background: var(--accent-blue);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(90deg, var(--accent-blue), var(--new-year-red));
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
         }
 
         .games-grid {
@@ -418,7 +586,8 @@
         }
 
         .game-card {
-            background: var(--card-bg);
+            background: rgba(16, 20, 50, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             overflow: hidden;
             transition: var(--transition);
@@ -426,12 +595,35 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            position: relative;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
 
         .game-card:hover {
             transform: translateY(-15px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border-color: var(--accent-blue);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--new-year-red));
+            border-radius: 20px 20px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
         }
 
         .game-header {
@@ -447,18 +639,28 @@
             border-radius: 16px;
             object-fit: cover;
             border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+            transition: var(--transition);
+        }
+
+        .game-card:hover .game-icon {
+            border-color: var(--new-year-red);
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+            transform: rotate(5deg);
         }
 
         .game-title {
             font-size: 1.8rem;
             color: var(--neutral-white);
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .game-description {
             padding: 0 30px;
             flex-grow: 1;
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
             margin-bottom: 20px;
+            opacity: 0.9;
         }
 
         .game-features {
@@ -470,14 +672,14 @@
             margin-bottom: 10px;
             padding-left: 25px;
             position: relative;
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
+            opacity: 0.9;
         }
 
         .game-features li:before {
-            content: '▶';
+            content: '🎁';
             position: absolute;
             left: 0;
-            color: var(--accent-teal);
             font-size: 0.8rem;
         }
 
@@ -495,7 +697,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 2000;
             display: flex;
             justify-content: center;
@@ -504,6 +706,7 @@
             visibility: hidden;
             transition: var(--transition);
             padding: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .game-modal.active {
@@ -512,22 +715,37 @@
         }
 
         .modal-content {
-            background: var(--primary-dark);
+            background: rgba(16, 20, 50, 0.95);
+            backdrop-filter: blur(20px);
             border-radius: 24px;
             max-width: 1200px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            border: 1px solid var(--accent-blue);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(59, 130, 246, 0.2);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         .modal-close {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 71, 87, 0.2);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -538,10 +756,12 @@
             cursor: pointer;
             z-index: 10;
             transition: var(--transition);
+            border: 1px solid rgba(255, 71, 87, 0.3);
         }
 
         .modal-close:hover {
-            background: var(--accent-blue);
+            background: rgba(255, 71, 87, 0.4);
+            transform: rotate(90deg);
         }
 
         .modal-screenshots {
@@ -562,6 +782,7 @@
             min-width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: brightness(0.9);
         }
 
         .screenshot-nav {
@@ -582,11 +803,13 @@
             background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nav-dot.active {
-            background: var(--accent-blue);
+            background: linear-gradient(45deg, var(--accent-blue), var(--new-year-red));
             transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
 
         .modal-arrows {
@@ -613,10 +836,12 @@
             cursor: pointer;
             transition: var(--transition);
             backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal-arrow:hover {
-            background: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.5);
+            transform: scale(1.1);
         }
 
         .modal-body {
@@ -626,7 +851,10 @@
         .modal-game-title {
             font-size: 2.5rem;
             margin-bottom: 20px;
-            color: var(--accent-blue);
+            background: linear-gradient(90deg, var(--accent-blue), var(--new-year-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         /* News Modal */
@@ -636,7 +864,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 2000;
             display: flex;
             justify-content: center;
@@ -645,6 +873,7 @@
             visibility: hidden;
             transition: var(--transition);
             padding: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .news-modal.active {
@@ -653,20 +882,28 @@
         }
 
         .news-modal-content {
-            background: var(--primary-dark);
+            background: rgba(16, 20, 50, 0.95);
+            backdrop-filter: blur(20px);
             border-radius: 24px;
             max-width: 800px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
-            border: 1px solid var(--accent-teal);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(6, 214, 160, 0.3);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(6, 214, 160, 0.2);
         }
 
         .news-modal-header {
             padding: 30px 40px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, 
+                rgba(0, 100, 255, 0.2) 0%,
+                rgba(100, 0, 255, 0.2) 100%
+            );
+            border-radius: 24px 24px 0 0;
         }
 
         .news-modal-title {
@@ -675,6 +912,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            text-shadow: 0 0 10px rgba(6, 214, 160, 0.5);
         }
 
         .news-modal-body {
@@ -688,25 +926,28 @@
         }
 
         .news-item {
-            background: var(--card-bg);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: var(--transition);
+            backdrop-filter: blur(5px);
         }
 
         .news-item:hover {
-            border-color: var(--accent-teal);
+            border-color: rgba(6, 214, 160, 0.3);
             transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .news-date {
             font-size: 0.9rem;
-            color: var(--accent-orange);
+            color: var(--new-year-gold);
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
+            text-shadow: 0 0 5px rgba(255, 165, 2, 0.5);
         }
 
         .news-text {
@@ -730,9 +971,24 @@
 
         /* Footer */
         footer {
-            background: var(--neutral-dark);
+            background: rgba(16, 20, 50, 0.9);
             padding: 80px 0 40px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            border-radius: 50% 50% 0 0;
+            z-index: 1;
         }
 
         .footer-grid {
@@ -740,6 +996,8 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 40px;
             margin-bottom: 50px;
+            position: relative;
+            z-index: 2;
         }
 
         .footer-column h3 {
@@ -748,6 +1006,7 @@
             color: var(--neutral-white);
             position: relative;
             display: inline-block;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .footer-column h3:after {
@@ -757,18 +1016,23 @@
             left: 0;
             width: 40px;
             height: 3px;
-            background: var(--accent-blue);
+            background: linear-gradient(90deg, var(--accent-blue), var(--new-year-red));
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
 
         .footer-logo {
             height: 80px;
             margin-bottom: 20px;
             border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
         }
 
         .footer-about {
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
             line-height: 1.8;
+            opacity: 0.9;
         }
 
         .footer-links {
@@ -780,17 +1044,20 @@
         }
 
         .footer-links a {
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
             text-decoration: none;
             transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 10px;
+            opacity: 0.9;
         }
 
         .footer-links a:hover {
             color: var(--accent-blue);
             transform: translateX(5px);
+            opacity: 1;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
 
         .telegram-promo {
@@ -798,6 +1065,7 @@
             padding: 25px;
             border-radius: 16px;
             border: 1px solid rgba(0, 136, 204, 0.3);
+            backdrop-filter: blur(5px);
         }
 
         .developer-info {
@@ -807,6 +1075,8 @@
             margin-top: 30px;
             padding-top: 30px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
         }
 
         .developer-avatar {
@@ -815,18 +1085,69 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent-teal);
+            box-shadow: 0 0 15px rgba(6, 214, 160, 0.3);
         }
 
         .developer-text {
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
             font-size: 0.9rem;
+            opacity: 0.9;
         }
 
         .copyright {
             text-align: center;
             padding-top: 40px;
-            color: var(--neutral-gray);
+            color: var(--neutral-white);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
+        }
+
+        .copyright p:first-child {
+            margin-bottom: 10px;
+        }
+
+        .copyright p:last-child {
+            font-size: 0.9rem;
+            color: var(--new-year-gold);
+            margin-top: 10px;
+        }
+
+        /* Анимация появления */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out both;
+        }
+        
+        /* Overlay for mobile menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Responsive Design */
@@ -951,9 +1272,11 @@
             }
             
             .ai-tooltip {
-                padding: 10px 16px;
-                font-size: 0.8rem;
-                bottom: calc(100% + 10px);
+                display: none;
+            }
+            
+            .footer-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -978,10 +1301,6 @@
             
             .game-title {
                 font-size: 1.5rem;
-            }
-            
-            .footer-grid {
-                grid-template-columns: 1fr;
             }
             
             .modal-screenshots {
@@ -1024,10 +1343,6 @@
                 width: 28px;
                 height: 28px;
             }
-            
-            .ai-tooltip {
-                display: none;
-            }
         }
 
         @media (min-width: 769px) and (max-width: 1024px) {
@@ -1039,44 +1354,12 @@
                 font-size: 1rem;
             }
         }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fadeInUp 0.8s ease-out both;
-        }
-        
-        /* Overlay for mobile menu */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 998;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-        
-        .menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
     </style>
 </head>
 <body>
+    <!-- Контейнер для снежинок -->
+    <div class="snow-container" id="snowContainer"></div>
+    
     <!-- Header -->
     <header id="header">
         <div class="container header-content">
@@ -1525,6 +1808,7 @@
             
             <div class="copyright">
                 <p>&copy; 2025 PlayTrain Company. Все права защищены.</p>
+                <p><i class="fas fa-tree"></i> С Новым Годом! <i class="fas fa-snowflake"></i></p>
             </div>
         </div>
     </footer>
@@ -1536,7 +1820,48 @@
     </div>
 
     <script>
+        // Создаем снежинки
+        function createSnowflakes() {
+            const snowContainer = document.getElementById('snowContainer');
+            const isMobile = window.innerWidth <= 768;
+            const snowflakeCount = isMobile ? 50 : 80; // Оптимальное количество снежинок
+            
+            // Очищаем контейнер
+            snowContainer.innerHTML = '';
+            
+            // Создаем снежинки
+            for (let i = 0; i < snowflakeCount; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                
+                // Размер снежинки
+                const size = Math.random() * (isMobile ? 6 : 8) + 2;
+                snowflake.style.width = `${size}px`;
+                snowflake.style.height = `${size}px`;
+                
+                // Позиция
+                snowflake.style.left = `${Math.random() * 100}%`;
+                snowflake.style.top = `${Math.random() * -100}px`;
+                
+                // Прозрачность
+                snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                // Скорость падения
+                const duration = Math.random() * (isMobile ? 8 : 12) + 5;
+                snowflake.style.animationDuration = `${duration}s`;
+                
+                // Задержка начала анимации
+                snowflake.style.animationDelay = `${Math.random() * -20}s`;
+                
+                // Добавляем снежинку в контейнер
+                snowContainer.appendChild(snowflake);
+            }
+        }
+
+        // Инициализация снежинок при загрузке
         document.addEventListener('DOMContentLoaded', function() {
+            createSnowflakes();
+            
             // Header scroll effect
             const header = document.getElementById('header');
             window.addEventListener('scroll', () => {
@@ -1668,9 +1993,6 @@
             floatingAiBtn.addEventListener('click', function() {
                 window.open('neiro.html', '_blank');
             });
-
-            // AI Button in hero section is already a link
-            // AI Button in navigation is already a link
 
             // Close modal with Escape key
             document.addEventListener('keydown', function(e) {
@@ -1844,6 +2166,16 @@
                 observer.observe(el);
             });
         });
+
+        // Обновление снежинок при изменении размера окна
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(createSnowflakes, 250);
+        });
+
+        // Пересоздание снежинок каждые 30 секунд для разнообразия
+        setInterval(createSnowflakes, 30000);
     </script>
 </body>
 </html>
