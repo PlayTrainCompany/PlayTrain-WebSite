@@ -25,6 +25,8 @@
             --new-year-red: #FF4757;
             --new-year-green: #2ED573;
             --new-year-gold: #FFA502;
+            --music-green: #00C851;
+            --music-red: #FF4444;
         }
 
         * {
@@ -202,6 +204,49 @@
             transform: translateY(-5px) scale(1.05);
         }
 
+        /* Кнопка управления музыкой */
+        .music-control-btn {
+            position: fixed;
+            top: 38px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(10, 25, 47, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--new-year-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(255, 165, 2, 0.3);
+            font-size: 0.9rem;
+        }
+
+        .music-control-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 6px 18px rgba(255, 165, 2, 0.5);
+        }
+
+        .music-control-btn.playing {
+            border-color: var(--music-green);
+            animation: pulse 2s infinite;
+        }
+
+        .music-control-btn.muted {
+            border-color: var(--music-red);
+            opacity: 0.7;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 200, 81, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 200, 81, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 200, 81, 0); }
+        }
+
         /* Header - Modern Sticky */
         header {
             position: fixed;
@@ -256,6 +301,7 @@
         .nav-links {
             display: flex;
             gap: 30px;
+            align-items: center;
         }
 
         .nav-links a {
@@ -1183,6 +1229,13 @@
                 width: 35px;
                 height: 35px;
             }
+            
+            .music-control-btn {
+                top: 80px;
+                right: 15px;
+                width: 36px;
+                height: 36px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1278,6 +1331,14 @@
             .footer-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .music-control-btn {
+                top: 40px;
+                right: 50px;
+                width: 34px;
+                height: 34px;
+                font-size: 0.85rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1343,6 +1404,14 @@
                 width: 28px;
                 height: 28px;
             }
+            
+            .music-control-btn {
+                top: 70px;
+                right: 12px;
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
         }
 
         @media (min-width: 769px) and (max-width: 1024px) {
@@ -1359,6 +1428,17 @@
 <body>
     <!-- Контейнер для снежинок -->
     <div class="snow-container" id="snowContainer"></div>
+    
+    <!-- Аудио элемент для новогодней музыки -->
+    <audio id="newYearMusic" loop>
+        <source src="newyear.mp3" type="audio/mpeg">
+        Ваш браузер не поддерживает аудио элемент.
+    </audio>
+    
+    <!-- Кнопка управления музыкой -->
+    <button class="music-control-btn playing" id="musicControlBtn">
+        <i class="fas fa-volume-up"></i>
+    </button>
     
     <!-- Header -->
     <header id="header">
@@ -1861,6 +1941,110 @@
         // Инициализация снежинок при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             createSnowflakes();
+            
+            // Управление новогодней музыкой
+            const newYearMusic = document.getElementById('newYearMusic');
+            const musicControlBtn = document.getElementById('musicControlBtn');
+            
+            if (newYearMusic && musicControlBtn) {
+                // Устанавливаем громкость (0.15 - тише, но слышно)
+                newYearMusic.volume = 0.15;
+                
+                // Убедимся, что музыка зациклена
+                newYearMusic.loop = true;
+                
+                // Пытаемся запустить музыку автоматически
+                const playMusic = () => {
+                    const playPromise = newYearMusic.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // Музыка запустилась успешно
+                            musicControlBtn.classList.add('playing');
+                            musicControlBtn.classList.remove('muted');
+                            musicControlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        }).catch(error => {
+                            // Автозапуск заблокирован, ждем взаимодействия пользователя
+                            console.log("Автозапуск музыки заблокирован браузером. Музыка будет включена после первого клика.");
+                            musicControlBtn.classList.remove('playing');
+                            musicControlBtn.classList.add('muted');
+                            musicControlBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                            
+                            // Добавляем обработчик для первого клика на сайте
+                            const enableMusicOnClick = () => {
+                                newYearMusic.play()
+                                    .then(() => {
+                                        musicControlBtn.classList.add('playing');
+                                        musicControlBtn.classList.remove('muted');
+                                        musicControlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                                    })
+                                    .catch(e => console.log("Не удалось запустить музыку:", e));
+                                
+                                // Удаляем обработчик после первого клика
+                                document.removeEventListener('click', enableMusicOnClick);
+                                document.removeEventListener('touchstart', enableMusicOnClick);
+                            };
+                            
+                            document.addEventListener('click', enableMusicOnClick);
+                            document.addEventListener('touchstart', enableMusicOnClick);
+                        });
+                    }
+                };
+                
+                // Запускаем музыку
+                playMusic();
+                
+                // Обработчик клика по кнопке управления музыкой
+                musicControlBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Предотвращаем всплытие
+                    
+                    if (newYearMusic.paused) {
+                        newYearMusic.play()
+                            .then(() => {
+                                this.classList.add('playing');
+                                this.classList.remove('muted');
+                                this.innerHTML = '<i class="fas fa-volume-up"></i>';
+                            })
+                            .catch(error => {
+                                console.log("Не удалось воспроизвести музыку:", error);
+                            });
+                    } else {
+                        newYearMusic.pause();
+                        this.classList.remove('playing');
+                        this.classList.add('muted');
+                        this.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    }
+                });
+                
+                // Обновляем состояние кнопки при изменении состояния музыки
+                newYearMusic.addEventListener('play', function() {
+                    musicControlBtn.classList.add('playing');
+                    musicControlBtn.classList.remove('muted');
+                    musicControlBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                });
+                
+                newYearMusic.addEventListener('pause', function() {
+                    musicControlBtn.classList.remove('playing');
+                    musicControlBtn.classList.add('muted');
+                    musicControlBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                });
+                
+                // Обработка ошибок воспроизведения
+                newYearMusic.addEventListener('error', function(e) {
+                    console.error("Ошибка загрузки музыки:", e);
+                    musicControlBtn.classList.remove('playing');
+                    musicControlBtn.classList.add('muted');
+                    musicControlBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    musicControlBtn.title = "Файл музыки не найден или не может быть воспроизведен";
+                });
+                
+                // Проверяем, зациклена ли музыка
+                newYearMusic.addEventListener('ended', function() {
+                    console.log("Музыка закончилась, начинаем заново...");
+                    this.currentTime = 0;
+                    this.play().catch(e => console.log("Не удалось перезапустить музыку:", e));
+                });
+            }
             
             // Header scroll effect
             const header = document.getElementById('header');
